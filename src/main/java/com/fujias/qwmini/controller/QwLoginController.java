@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,10 @@ public class QwLoginController  {
     public static String CORP_ID = "wx5429af15260896b3";
     /*小程序密钥*/
     public static String CORPSECRET = "c42b59b13a7b7fc3d53c266f733f49c6";
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     /**
      * 小程序登录
      *
@@ -37,8 +42,10 @@ public class QwLoginController  {
         String tk = (String) json.getByPath("access_token");
         String expire = (String) json.getByPath("expires_in");
 
-        RedisTemplate template = new RedisTemplate();
-//        template.
+        redisTemplate.s
+
+
+
         return tk;
 
     }
