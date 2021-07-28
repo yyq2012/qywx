@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.concurrent.TimeUnit;
+
 @RestController
 @RequestMapping("/qw/")
 public class QwLoginController  {
@@ -27,7 +29,7 @@ public class QwLoginController  {
     private RedisTemplate redisTemplate;
 
     /**
-     * 小程序登录
+     * 小程序获取token
      *
      * @return token
      * @throws Exception Exception
@@ -35,14 +37,18 @@ public class QwLoginController  {
     @GetMapping("token")
     public String getToken(){
 
+        if (redisTemplate.hasKey("access_token")){
+            return redisTemplate.boundValueOps("access_token").get().toString();
+        }
         String token = HttpUtil.get(TOKEN_URL.replaceAll("ID",CORP_ID).replaceAll("SECRET",CORPSECRET));
 
         JSON json = JSONUtil.parseObj(token);
         System.out.println(json.toString());
         String tk = (String) json.getByPath("access_token");
-        String expire = (String) json.getByPath("expires_in");
+        int expire = (int) json.getByPath("expires_in");
 
-
+        redisTemplate.boundValueOps("access_token").set(tk);
+        redisTemplate.expire("acess_token",expire, TimeUnit.SECONDS);
 
 
 
