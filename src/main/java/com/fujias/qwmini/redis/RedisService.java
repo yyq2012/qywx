@@ -30,4 +30,6 @@ public interface RedisService {
      * @return
      */
     boolean remove(String key);
+
+    boolean havekey(String key);
 }

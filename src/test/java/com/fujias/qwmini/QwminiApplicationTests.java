@@ -11,18 +11,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 class QwminiApplicationTests {
 
 
-    @Autowired
-    private RedisService redisService;
+    /*@Autowired
+    private RedisService redisService;*/
     @Test
     void contextLoads() {
     }
 
-    private JSONObject jsonObject = new JSONObject();
+//    private JSONObject jsonObject = new JSONObject();
 
-    @Test
-    public void setString(){
-        redisService.set("redis setString test","success");
-    }
+
 
 
 }
