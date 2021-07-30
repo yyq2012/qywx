@@ -11,6 +11,7 @@ import com.fujias.qwmini.redis.RedisService;
 import com.fujias.qwmini.results.AjaxResult;
 import com.fujias.qwmini.results.Code2SessionResult;
 
+import com.fujias.qwmini.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.*;
@@ -39,41 +40,10 @@ public class QwLoginController  {
     @Autowired
     private RedisService redisService;
 
-    /**
-     * 测试 小程序获取token
-     *
-     * @return token
-     *
-     */
-    @GetMapping("access_token")
-    public  String getToken(){
+    /** token服务*/
+    @Autowired
+    private TokenService tokenService;
 
-        /*if (redisTemplate.hasKey("access_token")){
-            return redisTemplate.boundValueOps("access_token").get().toString();
-        }*/
-        /*先从redis获取token*/
-        String key = "access_token";
-        if (redisService.havekey(key)){
-            return redisService.get(key);
-        }
-
-        String token = HttpUtil.get(TOKEN_URL.replaceAll("ID",CORP_ID).replaceAll("SECRET",CORPSECRET));
-
-        JSON json = JSONUtil.parseObj(token);
-        System.out.println(json);
-        String tk = (String) json.getByPath("access_token");
-        int expire = (int) json.getByPath("expires_in");
-
-        /*redisTemplate.boundValueOps("access_token").set(tk);
-        redisTemplate.expire("acess_token",expire, TimeUnit.SECONDS);
-*/
-        redisService.set(key,tk);
-        redisService.expire(key,expire);
-
-
-        return tk;
-
-    }
 
     /**
      * 企业微信小程序登录
@@ -83,18 +53,9 @@ public class QwLoginController  {
      */
     @PostMapping("/code2Session")
     public AjaxResult AjaxResult(@RequestParam String code){
-        String key = "access_token";
-        String access_token;
-        if (redisService.havekey(key)){
-            access_token  = redisService.get(key);
-        }else{
-            String access_token_josn =  HttpUtil.get(TOKEN_URL.replaceAll("ID",CORP_ID).replaceAll("SECRET",CORPSECRET));
-            JSON json = JSONUtil.parseObj(access_token_josn);
-            access_token = (String) json.getByPath("access_token");
-            int expire = (int) json.getByPath("expires_in");
-            redisService.set(key,access_token);
-            redisService.expire(key,expire);
-        }
+
+        /*获取access_token*/
+        String access_token = tokenService.getToken();
         /* http请求获取到结果json串*/
         String  jsonString =  HttpUtil.get(CODE2SESSION_URL.replaceAll("ACCESS_TOKEN",access_token).replaceAll("CODE",code));
         /* 转为JSONObject*/
