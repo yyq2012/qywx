@@ -1,5 +1,6 @@
 package com.fujias.qwmini.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
@@ -45,7 +46,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public String getToken() {
         String key = "access_token";
-        if (redisService.havekey(key)){
+        if (StrUtil.isNotEmpty(redisService.get(key))){
+            System.out.print(redisService.get(key));
             return redisService.get(key);
         }
 

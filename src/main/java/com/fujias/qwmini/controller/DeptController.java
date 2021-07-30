@@ -46,7 +46,7 @@ public class DeptController extends BaseController{
         if(StrUtil.isNotEmpty(id)){
              jsonStr = HttpUtil.get(GET_DEPT_LIST.replaceAll("ACCESS_TOKEN",access_token).replaceAll("ID",id));
         }else{
-             jsonStr = HttpUtil.get(GET_DEPT_LIST2.replaceAll("ACCESS_TOKEN",access_token).replaceAll("ID",id));
+             jsonStr = HttpUtil.get(GET_DEPT_LIST2.replaceAll("ACCESS_TOKEN",access_token));
         }
 
         JSONObject jsonObject = JSONUtil.parseObj(jsonStr);
@@ -71,15 +71,11 @@ public class DeptController extends BaseController{
      * @return com.fujias.qwmini.results.AjaxResult
      */
     @PostMapping("/list")
-    public AjaxResult deptList2(@RequestBody(required = false)  String id  ){
+    public AjaxResult deptList2( ){
 
         String access_token = tokenService.getToken();
         String jsonStr;
-        if(StrUtil.isNotEmpty(id)){
-            jsonStr = HttpUtil.get(GET_DEPT_LIST.replaceAll("ACCESS_TOKEN",access_token).replaceAll("ID",id));
-        }else{
-            jsonStr = HttpUtil.get(GET_DEPT_LIST2.replaceAll("ACCESS_TOKEN",access_token).replaceAll("ID",id));
-        }
+        jsonStr = HttpUtil.get(GET_DEPT_LIST2.replaceAll("ACCESS_TOKEN",access_token));
 
         JSONObject jsonObject = JSONUtil.parseObj(jsonStr);
 

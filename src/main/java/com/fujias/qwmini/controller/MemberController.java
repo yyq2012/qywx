@@ -7,6 +7,7 @@ import cn.hutool.json.JSONUtil;
 import com.fujias.qwmini.redis.RedisService;
 import com.fujias.qwmini.results.AjaxResult;
 import com.fujias.qwmini.service.TokenService;
+import jdk.nashorn.internal.runtime.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,14 +25,16 @@ public class MemberController extends BaseController{
     /*读取成员接口地址*/
     private static String url = "https://qyapi.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&userid=USERID";
 
-    /*获取部门成员接口地址*/
+    /** 获取部门成员接口地址 */
     private  static String GET_DEPT_MEMBERS = "https://qyapi.weixin.qq.com/cgi-bin/user/simplelist?access_token=ACCESS_TOKEN&department_id=DEPARTMENT_ID&fetch_child=FETCH_CHILD";
+
     @Autowired
     private RedisService redisService;
 
     @Autowired
     private TokenService tokenService;
-    /***
+
+    /**
      *
      * @description: 读取成员信息
      * @author YuYongqiang
@@ -56,7 +59,8 @@ public class MemberController extends BaseController{
         return ajaxResult;
 
     }
-    /***
+
+    /**
      * @description:获取部门成员
      * @date 2021/7/30 10:41
      * @param department_id 获取的部门id
@@ -64,18 +68,18 @@ public class MemberController extends BaseController{
      * @return com.fujias.qwmini.results.AjaxResult
      * @author YuYongqiang
      */
-
+    @Logger
     @PostMapping("/deptmembers")
-    public AjaxResult getDeptMembers (@RequestBody Map<String,String> map ) {
+    public AjaxResult getDeptMembers (@RequestParam String department_id,@RequestParam(required = false) String fetch_child ) {
+
 
         String access_token = tokenService.getToken();
-        String DEPARTMENT_ID = map.get("DEPARTMENT_ID");
-        String FETCH_CHILD  = map.get("FETCH_CHILD");
+
         String jsonStr;
-        if (StrUtil.isEmpty(FETCH_CHILD)){
-            FETCH_CHILD = "1";
+        if (StrUtil.isEmpty(fetch_child)){
+            fetch_child = "1";
         }
-        jsonStr = HttpUtil.get(GET_DEPT_MEMBERS.replaceAll("ACCESS_TOKEN", access_token).replaceAll("DEPARTMENT_ID",DEPARTMENT_ID).replaceAll("FETCH_CHILD", FETCH_CHILD));
+        jsonStr = HttpUtil.get(GET_DEPT_MEMBERS.replaceAll("ACCESS_TOKEN", access_token).replaceAll("DEPARTMENT_ID",department_id).replaceAll("FETCH_CHILD", fetch_child));
 
         JSONObject jsonObject = JSONUtil.parseObj(jsonStr);
         AjaxResult ajaxResult = new AjaxResult();
@@ -83,7 +87,7 @@ public class MemberController extends BaseController{
         ajaxResult.put(AjaxResult.MSG_TAG,"SUCCESS");
         ajaxResult.put(AjaxResult.DATA_TAG,jsonObject);
 
-
+        redisService.set("部门"+department_id, String.valueOf(jsonObject.get("userlist")));
         return ajaxResult;
     }
 

@@ -63,11 +63,13 @@ public class QwLoginController  {
         /* 转为JSONObject*/
         JSONObject jsonObject  = JSONUtil.parseObj(jsonString);
         String sk = String.valueOf(jsonObject.get("session_key"));
+        redisService.set("session_key",sk);
         /* 转为返回参数对象*/
         Code2SessionResult result  = JSONUtil.toBean( jsonObject,Code2SessionResult.class);
 
         String session_key = result.getSession_key();
         String user_id = result.getUserid();
+
 
         AjaxResult ajaxResult = new AjaxResult();
         int errcode  = (int) jsonObject.get("errcode");
