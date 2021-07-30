@@ -35,6 +35,8 @@ public class QwLoginController  {
 
     public static String  CODE2SESSION_URL ="https://qyapi.weixin.qq.com/cgi-bin/miniprogram/jscode2session?access_token=ACCESS_TOKEN&js_code=CODE&grant_type=authorization_code";
 
+    /*固定token*/
+    public static String TOKEN = "qIWPiDYsiTcOHwl9B08snJZ4XiIVuXC8bpALloeNu_GlES2rIGYBaDIMeRqEgF2jTOrtm4XvkVYsZIrKqJIF3AnO0okB60ur5gJDnRe1huaJZZTtZTAcI5WJ88Hjdt9P4GglwRmh5Vgtu_Jjn_4Ta0sC-M-EZ1QpuwJ52Pqq3XF0XNMUT0L-dPSnghJ5IK4qLYGImqQpzBs_uCtt_2BcRQ";
 
     /** redis服务 */
     @Autowired
@@ -73,6 +75,8 @@ public class QwLoginController  {
             ajaxResult.put(AjaxResult.CODE_TAG, HttpStatus.SUCCESS);
             ajaxResult.put(AjaxResult.MSG_TAG, "SUCCESS");
             ajaxResult.put(AjaxResult.DATA_TAG,jsonObject);
+            /*固定token*/
+            ajaxResult.put(AjaxResult.TOKEN_TAG,TOKEN);
         }else{
             ajaxResult.put(AjaxResult.CODE_TAG,jsonObject.get("errcode"));
             ajaxResult.put(AjaxResult.MSG_TAG,jsonObject.get("errmsg"));
